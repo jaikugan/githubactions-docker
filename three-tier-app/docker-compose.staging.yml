@@ -1,0 +1,63 @@
+services:
+
+  frontend:
+    image: ${DOCKERHUB_USERNAME}/frontend:${IMAGE_TAG}
+    container_name: frontend-staging
+
+    ports:
+      - "8081:80"
+
+    depends_on:
+      - backend
+
+    networks:
+      - frontend-network-staging
+
+
+  backend:
+    image: ${DOCKERHUB_USERNAME}/backend:${IMAGE_TAG}
+    container_name: backend-staging
+
+    environment:
+      DB_HOST: database
+      DB_USER: appuser
+      DB_PASSWORD: apppassword
+      DB_NAME: appdb
+
+    depends_on:
+      - database
+
+    networks:
+      - frontend-network-staging
+      - backend-network-staging
+
+
+  database:
+    image: mysql:8.4
+    container_name: database-staging
+
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: appdb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+
+    volumes:
+      - mysql-data-staging:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+    networks:
+      - backend-network-staging
+
+
+volumes:
+  mysql-data-staging:
+
+
+networks:
+
+  frontend-network-staging:
+    driver: bridge
+
+  backend-network-staging:
+    driver: bridge
