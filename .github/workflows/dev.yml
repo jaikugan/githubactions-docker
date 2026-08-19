@@ -28,13 +28,13 @@ jobs:
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/frontend:${{ steps.tag.outputs.image_tag }} \
-            ./frontend
+            ./three-tier-app/frontend
 
       - name: Build Backend
         run: |
           docker build \
             -t ${{ secrets.DOCKERHUB_USERNAME }}/backend:${{ steps.tag.outputs.image_tag }} \
-            ./backend
+            ./three-tier-app/backend
 
       - name: Push Frontend
         run: |
