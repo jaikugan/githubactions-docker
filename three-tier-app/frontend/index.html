@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Three Tier Docker Application</title>
+</head>
+
+<body>
+    <h1>Three Tier Docker Application</h1>
+
+    <p>Frontend: Nginx</p>
+    <p>Backend: Flask</p>
+    <p>Database: MySQL</p>
+
+    <button onclick="getUsers()">Get Users</button>
+
+    <pre id="output"></pre>
+
+    <script>
+        function getUsers() {
+            fetch('/api/users')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("output").innerText =
+                        JSON.stringify(data, null, 2);
+                })
+                .catch(error => {
+                    document.getElementById("output").innerText =
+                        error;
+                });
+        }
+    </script>
+</body>
+</html>

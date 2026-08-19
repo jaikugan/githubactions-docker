@@ -1,0 +1,62 @@
+services:
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+
+    ports:
+      - "8080:80"
+
+    depends_on:
+      - backend
+
+    networks:
+      - frontend-network
+
+
+  backend:
+    build: ./backend
+    container_name: backend
+
+    environment:
+      DB_HOST: database
+      DB_USER: appuser
+      DB_PASSWORD: apppassword
+      DB_NAME: appdb
+
+    depends_on:
+      - database
+
+    networks:
+      - frontend-network
+      - backend-network
+
+
+  database:
+    image: mysql:8.4
+    container_name: database
+
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: appdb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - backend-network
+
+
+volumes:
+  mysql-data:
+
+
+networks:
+
+  frontend-network:
+    driver: bridge
+
+  backend-network:
+    driver: bridge
