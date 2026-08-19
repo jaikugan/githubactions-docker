@@ -1,0 +1,53 @@
+name: Promote to PRODUCTION
+
+on:
+
+  workflow_dispatch:
+
+    inputs:
+
+      image_tag:
+
+        description: "Docker image tag to deploy"
+
+        required: true
+
+        type: string
+
+
+jobs:
+
+  deploy-production:
+
+    runs-on: self-hosted
+
+    environment: production
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to PRODUCTION
+
+        working-directory: ./three-tier-app
+
+        env:
+
+          DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+
+          IMAGE_TAG: ${{ inputs.image_tag }}
+
+        run: |
+
+          echo "Promoting image to PRODUCTION: $IMAGE_TAG"
+
+          docker compose \
+            -p three-tier-prod \
+            -f docker-compose.prod.yml \
+            pull
+
+          docker compose \
+            -p three-tier-prod \
+            -f docker-compose.prod.yml \
+            up -d
